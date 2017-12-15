@@ -15,14 +15,14 @@ final class MyImmutableClassWithListField{
 		this.myList = myList;
 	}*/
 	
-	//Constructor intialize properties using shallow copy
-		public MyImmutableClassWithListField(int id, String name,List<String> myList) {		
-			this.id = id;
-			this.name = name;
-			List<String> tempList=new ArrayList<>();
-			tempList.addAll(myList);
-			this.myList = tempList;
-		}
+	//Constructor intialize properties using Deep copy
+	public MyImmutableClassWithListField(int id, String name,List<String> myList) {		
+		this.id = id;
+		this.name = name;
+		List<String> tempList=new ArrayList<>();
+		tempList.addAll(myList);
+		this.myList = tempList;
+	}
 		
 	public int getId() {
 		return id;
@@ -73,3 +73,27 @@ public class ImmutablityDemoWithListField {
 	}
 
 }
+//OUTPUT with shallow copy constructor intialization
+/*
+true
+true
+immutableObj id:10
+immutableObj name:original
+immutableObj testList:[A, B, C]
+immutableObj id after local variable change:10
+immutableObj name after local variable change:original
+immutableObj testMap after local variable change:[A, B, C, D]
+immutableObj testMap after changing variable from get methods:[A, B, C, D, E]*/
+
+//OUTPUT with deep copy constructor intialization
+/*
+true
+false
+immutableObj id:10
+immutableObj name:original
+immutableObj testList:[A, B, C]
+immutableObj id after local variable change:10
+immutableObj name after local variable change:original
+immutableObj testMap after local variable change:[A, B, C]
+immutableObj testMap after changing variable from get methods:[A, B, C]
+*/

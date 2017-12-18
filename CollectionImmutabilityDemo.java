@@ -16,12 +16,12 @@ public class CollectionImmutabilityDemo {
 
 	public static List<Integer> getList(List<Integer> list){
 		
-		List<Integer> list1=list;
-		return list1;
+		/*List<Integer> list1=list;
+		return list1;*/
 		//do not use this above line, if you add this line then readOnlylist also get effected while changing to original list.
 		
-		//create new arralist and pass the incoming list in constructor.
-		//return new ArrayList<>(list);
+		//create new arralist and pass the incoming list in constructor(copy list to other list).
+		return new ArrayList<>(list);
 	}
 	
 	public static Map<Integer,String> getMap(Map<Integer,String> map){

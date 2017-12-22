@@ -18,19 +18,13 @@ public class StringAnagram {
 		}else{
 			System.out.println(s1+" and "+s2+" are not anagram");
 		}
-		HashSet<Integer> hset=new HashSet<>();
-		System.out.println(hset.add(10));
-		System.out.println(hset.add(20));
-		System.out.println(hset.add(10));
+		
 	}
 
 	public static boolean isAnagram(String s1,String s2){
 		boolean status=true;
 		s1=s1.replaceAll("\\s", "").toLowerCase();
-		s2=s2.replaceAll("\\s","").toLowerCase();
-		
-		System.out.println(s1);
-		System.out.println(s2);
+		s2=s2.replaceAll("\\s","").toLowerCase();		
 		
 		Map<Character,Integer> map=new HashMap<>();
 		
@@ -40,8 +34,7 @@ public class StringAnagram {
 		
 		for(int i=0;i<s1.length();i++){
 			int countIncrement=0;
-			Character s1_char=s1.charAt(i);
-			System.out.println("s1_char:"+s1_char);
+			Character s1_char=s1.charAt(i);			
 			if(map.containsKey(s1_char)){
 				countIncrement=map.get(s1_char);
 			}
@@ -49,14 +42,13 @@ public class StringAnagram {
 			map.put(s1_char, countIncrement);
 			
 			int countDecrement=0;
-			Character s2_char=s2.charAt(i);
-			System.out.println("s2_char:"+s2_char);
+			Character s2_char=s2.charAt(i);			
 			if(map.containsKey(s2_char)){
 				countDecrement=map.get(s2_char);
 			}
 			countDecrement=countDecrement-1;
 			map.put(s2_char, countDecrement);
-			System.out.println(map);
+			
 		}
 		for(Integer val:map.values()){
 			if(val !=0){

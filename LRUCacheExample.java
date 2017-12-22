@@ -8,26 +8,45 @@ public class LRUCacheExample {
 	
 	public static void main(String[] args) {
 		
+		Page page1=new Page(10,10);
+		Page page2=new Page(20,20);
+		Page page3=new Page(30,30);
+		Page page4=new Page(40,40);
+		Page page5=new Page(50,50);
+		Page page6=new Page(60,60);
+		
+		Page page7=new Page(70,70);//this page does not exist in cache and we request it first time
+		
 		LRUCache cache=new LRUCache(5);
-		cache.setPage(1, 1);
-		cache.setPage(2, 2);
-		cache.setPage(3, 3);
-		cache.setPage(4, 4);
-		cache.setPage(5, 5);
+		cache.setPage(page1);
+		cache.setPage(page2);
+		cache.setPage(page3);
+		cache.setPage(page4);
+		cache.setPage(page5);//capacity reached
 		
 		cache.printCacheData();
 		
-		cache.setPage(6, 6);
+		cache.setPage(page6); //new request
+		
 		cache.printCacheData(); 
 		
-		Page page=cache.getPage(3);
-		if(page != null){
-			System.out.println("Requested Page:(X:"+page.getX()+","+" Y:"+page.getY()+")");
+		Page reqPage=cache.getPage(page3); //existing request
+		if(reqPage != null){
+			System.out.println("Requested Page:(X:"+reqPage.getX()+","+" Y:"+reqPage.getY()+")");
 		}else{
 			System.out.println("Page doesn't exist in cache.");
 		}
 		
-		cache.printCacheData();  
+		cache.printCacheData();
+		
+		Page reqPage2=cache.getPage(page7); //existing request
+		if(reqPage2 != null){
+			System.out.println("Requested Page:(X:"+reqPage2.getX()+","+" Y:"+reqPage2.getY()+")");
+		}else{
+			System.out.println("Page doesn't exist in cache.");
+		}
+		
+		cache.printCacheData();
 		
 	}
 
@@ -47,7 +66,7 @@ public class LRUCacheExample {
  */
 class LRUCache{
 	private int capacity;
-	Map<Integer,Page> hash=null;
+	Map<Page,Page> hash=null; //here we can also use set instead of map
     MyQueue queue=null;
     
 	public LRUCache(int capacity){
@@ -56,33 +75,33 @@ class LRUCache{
 		queue=new MyQueue(capacity);
 	}
 	
-	public void setPage(int x,int y){
-		Page oldPage=hash.get(x);
-		if(oldPage != null){	
-			oldPage.setY(y);
-			queue.remove(oldPage);
-			queue.addFront(oldPage);
-			
+	public void setPage(Page page){
+		Page oldPage=hash.get(page);
+		if(oldPage != null){				
+			queue.remove(oldPage); //if page already in queue then remove from queue
+			queue.enqueue(oldPage);	// and enter to the rear.
 		}else{
 			
+			//if queue (cache) full and coming new request
 			if(hash.size()==capacity){
-				Page rem=queue.removeLast();
-				hash.remove(rem.getX());
+				Page rem=queue.dequeue(); //remove from queue
+				hash.remove(rem); // remove same page from hash
 			}
-			
-			Page newPage=new Page(x, y);
-			queue.addFront(newPage);
-			hash.put(x, newPage);
+			//add new entry to both queue and hash
+			queue.enqueue(page);
+			hash.put(page, page);
 		}
 	}
 	
-	public Page getPage(int x){
-		Page existPage=hash.get(x);
+	public Page getPage(Page page){
+		Page existPage=hash.get(page);
+		//if requested page doesn't exist
 		if(existPage == null){
 			return null;
 		}
+		//if exist then remove from queue and enter to rear
 		queue.remove(existPage);
-		queue.addFront(existPage);
+		queue.enqueue(existPage);
 		
 		return existPage;
 	}
@@ -119,7 +138,32 @@ class Page{
 	public void setY(int y) {
 		this.y = y;
 	}
-	
+
+	//override equal and hashcode to match page object
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + x;
+		result = prime * result + y;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Page other = (Page) obj;
+		if (x != other.x)
+			return false;
+		if (y != other.y)
+			return false;
+		return true;
+	}	
 }
 
 //Simple single linked list which have two properties: data and reference address of next node
@@ -154,74 +198,70 @@ print queue element.
 class MyQueue{
 	private int capacity;
 	private int length;
-	ListNode first=null;
+	ListNode front=null;
+	ListNode rear=null;
 	
 	public MyQueue(int capacity){
 		this.capacity=capacity;
 	}
 	
-	public void addFront(Page page){
+	//add to rear
+	public void enqueue(Page page){
 		if(length != capacity){
 		
-			ListNode node=new ListNode(page);
-			if(first==null){
-				first=node;
+			ListNode newNode=new ListNode(page);
+			if(front==null){
+				front=rear=newNode;
 			}else{
-				node.setNext(first);
-				first=node;
+				rear.setNext(newNode);				
+				rear=newNode;
 			}
 			length++;
 		}		
 	}
 	
+	//remove specific node
 	public Page remove(Page page){
-		Page temp=null;
-		ListNode curr=first;
+		ListNode temp=null;
+		ListNode curr=front;
 		ListNode prev=null;
 		
-		while(curr.getNext()!=null && curr.getPage().getX()!=page.getX()){
+		while(curr.getNext()!=null && !curr.getPage().equals(page)){
 			prev=curr;
 			curr=curr.getNext();
 		}
+		//check if first node is not
 		if(prev != null){
-			prev.setNext(curr.getNext());
-			temp=curr.getPage();
+			temp=curr;
+			prev.setNext(curr.getNext());			
 			length--;
 		}else{
-			temp=first.getPage();
-			first=null;
+			temp=front;
+			front=null;
 			length--;
 		}
 		
-		return temp;
+		return temp.getPage();
 	}
 	
-	public Page removeLast(){
-		ListNode curr=first;
-		ListNode prev=null;
-		ListNode temp=null;
-		while(curr.getNext() != null){
-			prev=curr;
-			curr=curr.getNext();
-		}
-		if(prev != null){
-			temp=curr;
-			prev.setNext(null);	
-			length--;
-		}else{
-			temp=curr;
-			first=null;
-			length--;
-		}				
+	//remove from front
+	public Page dequeue(){
+		ListNode temp=front;
+		//if queue(cache) not exist
+		if(front == null){			
+			return null;
+		}	
+		front=front.getNext();	
+		length--;
 		return temp.getPage();
 	}
 	
 	public void printQ(){
-		if(first!=null){
-			ListNode curr=first;
+		if(front!=null){
+			ListNode curr=front;
 			while(curr!=null){
 				Page p=curr.getPage();
-				System.out.print("("+p.getX()+","+p.getY()+") ");
+				System.out.print("Page("+p.getX()+","+p.getY()+") ");
 				curr=curr.getNext();
 			}
 			System.out.println();

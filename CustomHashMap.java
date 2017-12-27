@@ -172,17 +172,19 @@ public static void main(String[] args) {
 	map.put(3, 30);
 	map.put(4, 40);
 	map.put(null, 50);
-	//map.put(null, 60); //check null twice as key
-	
+	map.put(null, 60); //adding twice null key which not acceptable
+
 	map.print();
-	
-	System.out.println(map.get(3));
-	
-	System.out.println(map.remove(null));
-	
+
+	System.out.println("Find:key(3): "+map.get(3));
+
+	System.out.println("Removed:key(null): "+map.remove(null));
+
+	System.out.println("After removed null key map:");
 	map.print();
-	
-	System.out.println(map.get(null));
+
+	System.out.println("null key is not present in map but trying to remove null key:");
+	System.out.println("Removed: key(null): "+map.get(null));
 }
 
 

@@ -187,3 +187,24 @@ public static void main(String[] args) {
 
 
 }
+
+/*OUTPUT
+Key:null Value:50
+Key:1 Value:10
+Key:2 Value:20
+Key:3 Value:30
+Key:4 Value:40
+Find:key(3): 30
+Removed:key(null): 50
+After removed null key map:
+Key:1 Value:10
+Key:2 Value:20
+Key:3 Value:30
+Key:4 Value:40
+null key is not present in map but trying to remove null key:
+Removed: key(null): null
+javax.naming.OperationNotSupportedException: Null key allowed only once!!
+	at com.javaprograms.CustomHashMap.put(CustomHashMap.java:50)
+	at com.javaprograms.MainApp.main(MainApp.java:14)
+
+*/

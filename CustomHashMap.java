@@ -15,7 +15,7 @@ class Entry<K,V>{
 
 public class CustomHashMap<K,V> {
 	
-	private Entry<K,V> head;
+	//private Entry<K,V> head;
 	private int capacity;
 	private Entry[] table;
 	private boolean isNullKeyAvailable=false;
